@@ -106,7 +106,6 @@ def move(Trem,canvas): #recebemos o trem e o canvas (o trem para termos acesso a
             positionx1,positiony1 = coordenadas[0],coordenadas[1]
             if (positionx1 > 135 and positiony1 == 250) and (positionx2 == 310 and positiony2 < 430):
                     semaforo12.acquire()
-                    print("entrei aqui")
 
             if (positionx1 > 135 and positiony1 == 250) and (positionx4 < 485 and positiony4 == 255): 
                 semaforo14.acquire()
@@ -124,15 +123,15 @@ def move(Trem,canvas): #recebemos o trem e o canvas (o trem para termos acesso a
             
             #relaçao entre 2 e 1
 
-            if (positionx2 < 485 and positiony2 == 430) and (positionx1 == 310 and positiony1 > 250):
+            if (positionx2 < 485 and positiony2 == 430) and (positionx1 >250 and positiony1 == 250):
 
                 semaforo21.acquire()
             #relaçao entre 2 e 3
 
-            if(positionx2 < 470 and positiony2 == 430) and (positionx3 < 660 and positiony3 == 430):
+            if(positionx2 > 310 and positiony2 == 430) and (positionx3 < 660 and positiony3 == 430):
                 semaforo32.release()
 
-            if (positiony2 == 250 and positionx2 < 310) and (positionx3 == 310 and positiony3 > 430):
+            if (positiony2 == 250 and positionx2 >310) and (positionx3 == 485 and positiony3 > 250):
                 semaforo23.acquire()
 
 
@@ -140,11 +139,11 @@ def move(Trem,canvas): #recebemos o trem e o canvas (o trem para termos acesso a
             #relaçao entre 3 e 2
             positionx3,positiony3 = coordenadas[0],coordenadas[1]
             #relação entre trem 3 e 2
-            if (positionx3 < 660 and positiony3 == 430) and (positionx2 == 485 and positiony2 < 430):
+            if (positionx3 < 670 and positiony3 == 430) and (positionx2 > 310 and positiony2 == 250):
                 semaforo32.acquire()
             #relação entre 2 e 3
 
-            if (positionx3 > 500 and positiony3 == 250) and (positionx2 < 310 and positiony2 == 250 ):
+            if (positionx3 == 500 and positiony3 == 250) and (positionx2 >310 and positiony2 == 250 ):
                 semaforo23.release()
 
         if (Trem.get_name() == "trem4"):
