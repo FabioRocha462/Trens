@@ -5,10 +5,17 @@ from tkinter import *
 from PIL import ImageTk, Image
 
 #semáfors dos trens
-semaforo1 = th.Semaphore(1)
-semaforo2 = th.Semaphore(1)
-semaforo3 = th.Semaphore(1)
-semaforo4 = th.Semaphore(1)
+semaforo12 = th.Semaphore(4)
+semaforo21 = th.Semaphore(4)
+semaforo14 = th.Semaphore(4)
+semaforo24 = th.Semaphore(4)
+semaforo32 = th.Semaphore(4)
+semaforo23 = th.Semaphore(4)
+semaforo42 = th.Semaphore(4)
+semaforo43 = th.Semaphore(4)
+semaforo2 = th.Semaphore(4)
+semaforo3 = th.Semaphore(4)
+semaforo4 = th.Semaphore(4)
 
 dict = {}
 #variável global para o start e o stop dos trens
@@ -45,7 +52,7 @@ positiony4 = 0
 #class trem
 class Trem:
     #construtor inicial
-    def __init__(self,coordenadaXI,coordenadaYI, canvas,timing,trem):
+    def __init__(self,coordenadaXI,coordenadaYI, canvas,timing,trem,name):
         self.coordenadaXI = coordenadaXI #x-inicial que corresponse o sentido horizontal
         self.coordenadaYI = coordenadaYI #y-inicial que corresponse o sentido vertical
         self.canvas = canvas #canvas para manipular as imagens e atualizar posições
@@ -61,15 +68,20 @@ class Trem:
         )
         
         self.imagem = TremEnv #agora passamos o tremEnv para a imagem criada
+        self.name = name
         
+    def get_name(self):
+        return self.name
 
 
 #função mover os trens            
 def move(Trem,canvas): #recebemos o trem e o canvas (o trem para termos acesso as infirmações de imagem e o canvas para pegar a posiçao geral)
     global START_TREM # aqui tornamos o START_TREM como global
-    global positionx1,positiony1,positionx2,positiony2,positionx3,positiony3,positionx4,positiony4
+    global positionx1,positiony1,positionx4,positiony4,positionx2,positiony2,positionx3,positiony3
     coordx = float(Trem.coordenadaXI) #obtemos o coordenadaX do trem
     coordy = float(Trem.coordenadaYI) #obtemos o coordenadaY do trem
+    #velocidade dos trens
+    global velocidade1,velocidade2,velocidade3,velocidade4
     #posições x e y para atualizar o move
     x = 0 
     y = 0
@@ -94,24 +106,82 @@ def move(Trem,canvas): #recebemos o trem e o canvas (o trem para termos acesso a
             y = 0
             x = -5
 
-        #------------------------------------------------
-        #------------------------------------------------
-        #------------------------------------------------
+        if (Trem.get_name() == "trem1"):
+            velocidade1 = Trem.timing
+            positionx1,positiony1 = coordenadas[0],coordenadas[1]
+            if (positionx1 > 135 and positiony1 == 250) and (positionx2 == 310 and positiony2 < 430):
+                    semaforo12.acquire()
 
-        if (coordenadas[0] > 260 and coordenadas[0]<=310 ) and (coordenadas[1] == 250):
-            
-            semaforo1.acquire()
-            t.sleep(1)
-            semaforo1.release()
-            
+            if (positionx1 > 135 and positiony1 == 250) and (positionx4 < 485 and positiony4 == 255): 
+                semaforo14.acquire()
 
-        
+            if(positionx1 < 280 and positiony1 == 430) and (positionx2 < 470 and positiony2 == 430):
+                semaforo21.release()
+
+        if (Trem.get_name() == "trem2"):
+            # relaçao entre trem 2 e trem 4
+            positionx2,positiony2 = coordenadas[0],coordenadas[1]
+            velocidade2 = Trem.timing
+            if (positiony2 == 250 and positionx2 > 320) and (positionx1 > 135 and positiony1 == 250):
+                    semaforo12.release()
+            if(positionx2 == 310 and positiony2 < 350 ) and (positionx4 < 485 and positiony4 == 255):
+                semaforo24.acquire()
+
+            if(positionx4 == 485 and positiony4 > 90)  and (positionx2 == 485 and positiony2 > 250):
+                semaforo42.release()
+            
+            #relaçao entre 2 e 1
+
+            if (positionx2 < 485 and positiony2 == 430) and (positionx1 == 310 and positiony1 > 250):
+
+                semaforo21.acquire()
+            #relaçao entre 2 e 3
+
+            if(positionx2 > 310 and positiony2 == 430) and (positionx3 < 660 and positiony3 == 430):
+                semaforo32.release()
+
+            if (positiony2 == 250 and positionx2 >310) and (positionx3 == 485 and positiony3 > 250):
+                semaforo23.acquire()
+
+
+        if (Trem.get_name() == "trem3"):
+            #relaçao entre 3 e 2
+            positionx3,positiony3 = coordenadas[0],coordenadas[1]
+            #relação entre trem 3 e 2
+            velocidade3 = Trem.timing
+            if (positionx3 < 670 and positiony3 == 430) and (positionx2 > 310 and positiony2 == 250):
+                semaforo32.acquire()
+            #relação entre 2 e 3
+             #RELAÇÃO ENTRE 4 E 3
+            if(positionx4 == 485 and positiony4 > 200) and (positionx3 > 500 and positiony3 == 250):
+                semaforo43.acquire()
+
+            if (positionx3 > 500 and positiony3 == 250) and (positionx2 >310 and positiony2 == 250 ):
+                semaforo23.release()
+
+        if (Trem.get_name() == "trem4"):
+            positionx4,positiony4 = coordenadas[0],coordenadas[1]
+            velocidade4 = Trem.timing
+            #relação entre  1 e 4
+            if (positiony4 > 200 and positionx4 == 310) and (positionx1 > 150 and positiony1 == 250):
+                semaforo14.release()
+            #RELAÇÃO ENTRE 4 E 2
+            if (positiony4 > 200 and positionx4 == 310) and (positionx2 == 310 and positiony2 < 350 ) :
+                semaforo24.release()
+            if (positionx4 == 485 and positiony4 > 90) and (positionx2 > 310 and positiony2 == 250):
+                semaforo42.acquire()
+            #RELAÇÃO ENTRE 4 E 3
+            if(positionx4 == 485 and positiony4 > 200) and (positionx3 == 485 and positiony3 < 430):
+                semaforo43.acquire()
+
 
         canvas.move(Trem.imagem,x,y)#podemos mover os trens com a função do canvas chamada move passando estes três argumentos
         #fazemos o update
         root.update()
         #colocamos para dormir
         t.sleep(Trem.timing)
+        
+        
 
 
            
@@ -194,10 +264,10 @@ class App(object):
         trem3 = ImageTk.PhotoImage(Image.open('trem.png').resize((30,30)))
         trem4 = ImageTk.PhotoImage(Image.open('trem.png').resize((30,30)))
 
-        TremInstance1 = Trem(135,430,self.canvas,float(self.TimeTrem1.get()),trem1)
-        TremInstance2 = Trem(310,430,self.canvas,float(self.TimeTrem2.get()),trem2)
-        TremInstance3 = Trem(485,430,self.canvas,float(self.TimeTrem3.get()),trem3)
-        TremInstance4 = Trem(310,255,self.canvas,float(self.TimeTrem4.get()),trem4)   
+        TremInstance1 = Trem(135,430,self.canvas,float(self.TimeTrem1.get()),trem1,"trem1")
+        TremInstance2 = Trem(310,430,self.canvas,float(self.TimeTrem2.get()),trem2,"trem2")
+        TremInstance3 = Trem(485,430,self.canvas,float(self.TimeTrem3.get()),trem3,"trem3")
+        TremInstance4 = Trem(310,255,self.canvas,float(self.TimeTrem4.get()),trem4,"trem4")   
 
         thread1 = th.Thread(target=move,args=(TremInstance1,self.canvas)).start()
         dict[TremInstance1] = th.get_native_id()
@@ -229,7 +299,7 @@ app = App(root)
 
 root.mainloop()
 
-print(positionx1,positiony1)
+
 
 
 
