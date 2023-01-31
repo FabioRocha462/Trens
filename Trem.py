@@ -132,8 +132,7 @@ def move(Trem,canvas): #recebemos o trem e o canvas (o trem para termos acesso a
             
             #relaçao entre 2 e 1
 
-            if (positionx2 < 485 and positiony2 == 430) and (positionx1 == 310 and positiony1 > 250):
-
+            if (positionx2 < 485 and positiony2 == 430) and ((positionx1 == 310 and positiony1 > 250) or (positionx1 > 290 and positiony1 == 250) ):
                 semaforo21.acquire()
             #relaçao entre 2 e 3
 
