@@ -155,7 +155,7 @@ def move(Trem,canvas): #recebemos o trem e o canvas (o trem para termos acesso a
              #RELAÇÃO ENTRE 4 E 3
 
             if(positionx4 == 485 and positiony4 > 200) and (positionx3 > 500 and positiony3 == 250):
-                semaforo43.realise()
+                semaforo43.release()
 
             #relação entre 2 e 3
 
