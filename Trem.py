@@ -11,6 +11,8 @@ semaforo14 = th.Semaphore(4)
 semaforo24 = th.Semaphore(4)
 semaforo32 = th.Semaphore(4)
 semaforo23 = th.Semaphore(4)
+semaforo42 = th.Semaphore(4)
+semaforo43 = th.Semaphore(4)
 semaforo2 = th.Semaphore(4)
 semaforo3 = th.Semaphore(4)
 semaforo4 = th.Semaphore(4)
@@ -78,6 +80,8 @@ def move(Trem,canvas): #recebemos o trem e o canvas (o trem para termos acesso a
     global positionx1,positiony1,positionx4,positiony4,positionx2,positiony2,positionx3,positiony3
     coordx = float(Trem.coordenadaXI) #obtemos o coordenadaX do trem
     coordy = float(Trem.coordenadaYI) #obtemos o coordenadaY do trem
+    #velocidade dos trens
+    global velocidade1,velocidade2,velocidade3,velocidade4
     #posições x e y para atualizar o move
     x = 0 
     y = 0
@@ -103,6 +107,7 @@ def move(Trem,canvas): #recebemos o trem e o canvas (o trem para termos acesso a
             x = -5
 
         if (Trem.get_name() == "trem1"):
+            velocidade1 = Trem.timing
             positionx1,positiony1 = coordenadas[0],coordenadas[1]
             if (positionx1 > 135 and positiony1 == 250) and (positionx2 == 310 and positiony2 < 430):
                     semaforo12.acquire()
@@ -116,14 +121,18 @@ def move(Trem,canvas): #recebemos o trem e o canvas (o trem para termos acesso a
         if (Trem.get_name() == "trem2"):
             # relaçao entre trem 2 e trem 4
             positionx2,positiony2 = coordenadas[0],coordenadas[1]
-            if (positiony2 == 250 and positionx2 > 430) and (positionx1 > 135 and positiony1 == 250):
+            velocidade2 = Trem.timing
+            if (positiony2 == 250 and positionx2 > 320) and (positionx1 > 135 and positiony1 == 250):
                     semaforo12.release()
             if(positionx2 == 310 and positiony2 < 350 ) and (positionx4 < 485 and positiony4 == 255):
                 semaforo24.acquire()
+
+            if(positionx4 == 485 and positiony4 > 90)  and (positionx2 == 485 and positiony2 > 250):
+                semaforo42.release()
             
             #relaçao entre 2 e 1
 
-            if (positionx2 < 485 and positiony2 == 430) and (positionx1 >250 and positiony1 == 250):
+            if (positionx2 < 485 and positiony2 == 430) and (positionx1 == 310 and positiony1 > 250):
 
                 semaforo21.acquire()
             #relaçao entre 2 e 3
@@ -139,21 +148,31 @@ def move(Trem,canvas): #recebemos o trem e o canvas (o trem para termos acesso a
             #relaçao entre 3 e 2
             positionx3,positiony3 = coordenadas[0],coordenadas[1]
             #relação entre trem 3 e 2
+            velocidade3 = Trem.timing
             if (positionx3 < 670 and positiony3 == 430) and (positionx2 > 310 and positiony2 == 250):
                 semaforo32.acquire()
             #relação entre 2 e 3
+             #RELAÇÃO ENTRE 4 E 3
+            if(positionx4 == 485 and positiony4 > 200) and (positionx3 > 500 and positiony3 == 250):
+                semaforo43.acquire()
 
-            if (positionx3 == 500 and positiony3 == 250) and (positionx2 >310 and positiony2 == 250 ):
+            if (positionx3 > 500 and positiony3 == 250) and (positionx2 >310 and positiony2 == 250 ):
                 semaforo23.release()
 
         if (Trem.get_name() == "trem4"):
             positionx4,positiony4 = coordenadas[0],coordenadas[1]
+            velocidade4 = Trem.timing
+            #relação entre  1 e 4
             if (positiony4 > 200 and positionx4 == 310) and (positionx1 > 150 and positiony1 == 250):
                 semaforo14.release()
-
+            #RELAÇÃO ENTRE 4 E 2
             if (positiony4 > 200 and positionx4 == 310) and (positionx2 == 310 and positiony2 < 350 ) :
                 semaforo24.release()
-          
+            if (positionx4 == 485 and positiony4 > 90) and (positionx2 > 310 and positiony2 == 250):
+                semaforo42.acquire()
+            #RELAÇÃO ENTRE 4 E 3
+            if(positionx4 == 485 and positiony4 > 200) and (positionx3 == 485 and positiony3 < 430):
+                semaforo43.acquire()
 
 
         canvas.move(Trem.imagem,x,y)#podemos mover os trens com a função do canvas chamada move passando estes três argumentos
