@@ -151,10 +151,13 @@ def move(Trem,canvas): #recebemos o trem e o canvas (o trem para termos acesso a
             velocidade3 = Trem.timing
             if (positionx3 < 670 and positiony3 == 430) and (positionx2 > 310 and positiony2 == 250):
                 semaforo32.acquire()
-            #relação entre 2 e 3
+            
              #RELAÇÃO ENTRE 4 E 3
+
             if(positionx4 == 485 and positiony4 > 200) and (positionx3 > 500 and positiony3 == 250):
-                semaforo43.acquire()
+                semaforo43.realise()
+
+            #relação entre 2 e 3
 
             if (positionx3 > 500 and positiony3 == 250) and (positionx2 >310 and positiony2 == 250 ):
                 semaforo23.release()
