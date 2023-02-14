@@ -10,8 +10,19 @@ semaforo2 = th.Semaphore(4)
 semaforo3 = th.Semaphore(4)
 semaforo4 = th.Semaphore(4)
 
-def AcquireSemaphore1(semaphore,eixoX,eixoY,positionx,positiony):
-    pass
+def AcquireSemaphore1(semaphore,trem,coordenadas, *args, **kwargs):
+
+    if trem.get_name() == "trem1":
+
+        if coordenadas[0] > 260 and coordenadas[1] == 250:
+
+            if (coordenadas[3] == 310 and coordenadas[4] < 300) or (coordenadas[5] < 360 and coordenadas[6] == 255):
+
+                semaphore.acquire()
+
+
+
+    
 
 
 
